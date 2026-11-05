@@ -158,7 +158,7 @@ export function WorkbenchMenubar({
         <h1 className="text-sm font-semibold tracking-tight">墨排</h1>
       </div>
 
-      <Menubar className="hidden h-9 min-w-0 flex-1 justify-start gap-1 rounded-none border-0 bg-transparent px-0 sm:flex">
+      <Menubar className="hidden h-9 min-w-0 flex-1 justify-start rounded-none border-0 bg-transparent px-0 sm:flex">
         <MenubarMenu>
           <MenubarTrigger className="whitespace-nowrap px-2.5 sm:px-3">文件</MenubarTrigger>
           <MenubarContent>
