@@ -111,7 +111,8 @@ const editorTheme = EditorView.theme({
   },
   "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
     {
-      backgroundColor: "color-mix(in oklch, var(--primary) 24%, transparent)",
+      backgroundColor: "var(--selection-background)",
+      color: "var(--foreground)",
     },
   ".cm-cursor, .cm-dropCursor": {
     borderLeftColor: "var(--primary)",

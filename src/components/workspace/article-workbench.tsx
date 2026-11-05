@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Eye, FileCode2, PanelRightOpen, PenLine } from "lucide-react";
+import { Eye, PanelRightOpen, PenLine } from "lucide-react";
 
 import {
   AlertDialog,
@@ -27,7 +27,6 @@ import {
   EMPTY_SKILL_METADATA,
   parseSkillDocument,
   serializeSkillDocument,
-  validateSkillMetadata,
 } from "@/features/skills/frontmatter";
 import { exportMarkdown, defaultExportName, readMarkdownFile } from "@/features/publishing/markdown-file";
 import { exportLongImage } from "@/features/publishing/long-image";
@@ -120,7 +119,6 @@ function WorkbenchSurface() {
 
   const wordCount = countCharacters(markdown);
   const lineCount = countLines(markdown);
-  const skillValidationErrors = validateSkillMetadata(skillMetadata);
 
   const syncPreviewScroll = (ratio: number) => {
     const container = previewScrollRef.current;
@@ -370,19 +368,6 @@ function WorkbenchSurface() {
                 {wordCount} 字 · {lineCount} 行
               </span>
               <span className="flex items-center gap-1.5">
-                {skillMode ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSkillMetadataOpen(true)}
-                    className="h-7 gap-1 px-2 text-[11px]"
-                  >
-                    <FileCode2 className="size-3.5" />
-                    {skillValidationErrors.length > 0
-                      ? `${skillValidationErrors.length} 项待完善`
-                      : "SKILL 元数据"}
-                  </Button>
-                ) : null}
                 <span className="size-1.5 rounded-full bg-emerald-500" />
                 已保存到浏览器
               </span>
@@ -400,14 +385,15 @@ function WorkbenchSurface() {
           )}
         >
           <PreviewPane
-            markdown={markdown}
-            themeId={skillMode ? DEFAULT_THEME_ID : themeId}
-            linkFootnotes={linkFootnotes}
-            skillMode={skillMode}
-            skillMetadata={skillMetadata}
-            scrollRef={previewScrollRef}
-            onHide={() => setPreviewVisible(false)}
-          />
+              markdown={markdown}
+              themeId={skillMode ? DEFAULT_THEME_ID : themeId}
+              linkFootnotes={linkFootnotes}
+              skillMode={skillMode}
+              skillMetadata={skillMetadata}
+              scrollRef={previewScrollRef}
+              onEditMetadata={() => setSkillMetadataOpen(true)}
+              onHide={() => setPreviewVisible(false)}
+            />
         </div>
 
         <AnimatePresence>

@@ -2,7 +2,7 @@
 
 import { useMemo, useSyncExternalStore, type RefObject } from "react";
 import DOMPurify from "dompurify";
-import { PanelRightClose } from "lucide-react";
+import { FileCode2, PanelRightClose } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ interface PreviewPaneProps {
   skillMetadata: SkillMetadata;
   className?: string;
   scrollRef?: RefObject<HTMLDivElement | null>;
+  onEditMetadata?: () => void;
   onHide?: () => void;
 }
 
@@ -42,6 +43,7 @@ export function PreviewPane({
   skillMetadata,
   className,
   scrollRef,
+  onEditMetadata,
   onHide,
 }: PreviewPaneProps) {
   const mounted = useSyncExternalStore(
@@ -75,23 +77,45 @@ export function PreviewPane({
         <span className="text-xs font-medium text-muted-foreground">
           {skillMode ? "SKILL.md 预览" : "实时预览"}
         </span>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="隐藏预览"
-                onClick={onHide}
-                className="text-muted-foreground hover:text-foreground"
-              />
-            }
-          >
-            <PanelRightClose />
-          </TooltipTrigger>
-          <TooltipContent>隐藏预览</TooltipContent>
-        </Tooltip>
+        <div className="flex items-center gap-1">
+          {skillMode ? (
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    aria-label="编辑 SKILL 元数据"
+                    onClick={onEditMetadata}
+                    className="h-8 gap-1.5 px-2 text-xs"
+                  />
+                }
+              >
+                <FileCode2 />
+                编辑元数据
+              </TooltipTrigger>
+              <TooltipContent>编辑 SKILL.md 元数据</TooltipContent>
+            </Tooltip>
+          ) : null}
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="隐藏预览"
+                  onClick={onHide}
+                  className="text-muted-foreground hover:text-foreground"
+                />
+              }
+            >
+              <PanelRightClose />
+            </TooltipTrigger>
+            <TooltipContent>隐藏预览</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
       <div
