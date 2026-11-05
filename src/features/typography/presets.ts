@@ -738,7 +738,11 @@ const plainCss = `/* 素白 · 不施粉黛，保留 Markdown 原样 */
 
 #artix p { margin: 0 0 16px; }
 #artix ul, #artix ol { margin: 0 0 16px; padding-left: 26px; }
+#artix ul { list-style-type: disc; }
+#artix ul ul { list-style-type: circle; }
+#artix ol { list-style-type: decimal; }
 #artix li { margin: 4px 0; }
+#artix .task-list-item { list-style: none; }
 
 #artix blockquote {
   margin: 20px 0;

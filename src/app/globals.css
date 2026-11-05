@@ -144,6 +144,17 @@
 
 /* Workbench */
 
+.brand-logo {
+  -webkit-mask-image: url("/logo.svg");
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 140%;
+  mask-image: url("/logo.svg");
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 140%;
+}
+
 :root {
   --md-syntax-heading: #c2410c;
   --md-syntax-strong: #111827;

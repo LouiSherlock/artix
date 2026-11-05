@@ -96,7 +96,7 @@ export function FormatRibbon({
           <Redo2 />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-11" />
 
         <ToolButton
           label="粗体 (Ctrl+B)"
@@ -123,7 +123,7 @@ export function FormatRibbon({
           <Strikethrough />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-11" />
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -244,7 +244,7 @@ export function FormatRibbon({
           <Minus />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-11" />
 
         <ToolButton label="清空稿件" onClick={onClear}>
           <Eraser />

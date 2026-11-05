@@ -18,7 +18,6 @@ import {
   Menu,
   Palette,
   PanelRight,
-  PenLine,
   Redo2,
   RotateCcw,
   Table2,
@@ -154,7 +153,7 @@ export function WorkbenchMenubar({
     <header className="sticky top-0 z-40 flex h-12 w-full items-center gap-2 border-b bg-background/85 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/70 lg:px-6 2xl:px-8">
       <div className="flex min-w-0 items-center gap-2 pr-2 sm:gap-2.5 sm:pr-3">
         <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-          <PenLine className="size-4" />
+          <span aria-hidden="true" className="brand-logo size-5 bg-primary-foreground" />
         </div>
         <h1 className="text-sm font-semibold tracking-tight">墨排</h1>
       </div>

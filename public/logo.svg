@@ -1,0 +1,31 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="feather" x1="118" y1="390" x2="390" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#123FE0"></stop>
+      <stop offset=".52" stop-color="#1764F5"></stop>
+      <stop offset="1" stop-color="#4B8DFF"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- 羽毛主体 -->
+  <path d="M105 405
+    C108 302 132 216 207 151
+    C269 97 350 75 423 79
+    C435 151 412 233 359 284
+    C310 331 246 339 193 357
+    C158 369 128 389 105 405Z" fill="url(#feather)"></path>
+
+  <!-- 羽毛内部留白 -->
+  <path d="M105 405
+    C174 319 243 246 343 164
+    C281 204 219 250 160 306
+    C137 328 118 363 105 405Z" fill="#FFFFFF"></path>
+
+  <!-- 局部层次 -->
+  <path d="M105 405
+    C169 354 229 326 293 310
+    C352 296 391 270 423 229
+    C394 294 346 333 281 349
+    C211 366 153 384 105 405Z" fill="#123FE0" opacity=".16"></path>
+</svg>
