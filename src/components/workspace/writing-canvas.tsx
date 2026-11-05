@@ -173,14 +173,6 @@ const editorTheme = EditorView.theme({
     letterSpacing: "0.12em",
     opacity: 1,
   },
-  ".cm-tooltip-autocomplete > ul::-webkit-scrollbar": { width: "6px" },
-  ".cm-tooltip-autocomplete > ul::-webkit-scrollbar-thumb": {
-    borderRadius: "999px",
-    backgroundColor: "color-mix(in oklch, var(--foreground) 18%, transparent)",
-  },
-  ".cm-tooltip-autocomplete > ul::-webkit-scrollbar-track": {
-    backgroundColor: "transparent",
-  },
   ".cm-tooltip.cm-tooltip-autocomplete > ul > li:hover": {
     backgroundColor: "color-mix(in oklch, var(--foreground) 6%, transparent)",
   },
@@ -316,7 +308,7 @@ export function WritingCanvas({
           rectangularSelection(),
           highlightActiveLine(),
           EditorView.lineWrapping,
-          placeholder("开始书写你的公众号文章…"),
+          placeholder("开始书写你的文章…"),
           markdownSupport,
           markdownSupport.language.data.of({
             autocomplete: slashCommandSource,

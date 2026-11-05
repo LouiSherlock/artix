@@ -88,7 +88,7 @@ export function FormatRibbon({
 }: FormatRibbonProps) {
   return (
     <div className="border-b bg-background/70 backdrop-blur">
-      <div className="mx-auto flex h-11 w-full max-w-[760px] items-center gap-0.5 overflow-x-auto pr-3 pl-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex h-11 w-full max-w-[760px] items-center gap-0.5 overflow-x-auto pr-3 pl-10">
         <ToolButton label="撤销 (Ctrl+Z)" disabled={!canUndo} onClick={onUndo}>
           <Undo2 />
         </ToolButton>

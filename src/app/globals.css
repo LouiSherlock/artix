@@ -158,39 +158,33 @@ body {
   overscroll-behavior: none;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent)
+    transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--foreground) 18%, transparent);
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 .cm-editor {
   height: 100%;
 }
 
 .cm-editor.cm-focused {
   outline: none;
-}
-
-.cm-scroller::-webkit-scrollbar,
-.md-preview-scroll::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.cm-scroller::-webkit-scrollbar-thumb,
-.md-preview-scroll::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: color-mix(in oklch, var(--foreground) 18%, transparent);
-}
-
-.cm-scroller::-webkit-scrollbar-track,
-.md-preview-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Firefox 没有 ::-webkit-scrollbar，用标准属性兜底（Chrome 支持度更好，仍走上一条） */
-@supports not selector(::-webkit-scrollbar) {
-  .cm-scroller,
-  .md-preview-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent)
-      transparent;
-  }
 }
 
 .md-preview-content {

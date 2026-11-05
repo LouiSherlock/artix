@@ -31,6 +31,9 @@ interface ThemeGalleryProps {
 function previewDocument(theme: ThemeSpec, dark: boolean) {
   const css = `${themeCss(theme)}${dark ? nightCss(theme) : ""}`;
   const page = dark ? "#17181c" : "#ffffff";
+  const foreground = dark
+    ? "oklch(0.986 0.002 67.8)"
+    : "oklch(0.147 0.004 49.3)";
   const sample = `<section id="artix">
   <h1>${theme.name}</h1>
   <p>${theme.tagline}。这是一段示例正文，包含 <strong>重点</strong>、<em>强调</em> 与 <a href="#">链接</a>。</p>
@@ -55,6 +58,18 @@ function previewDocument(theme: ThemeSpec, dark: boolean) {
 <style>
 html, body { margin: 0; padding: 0; background: ${page}; }
 ${css}
+html { --foreground: ${foreground}; }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent) transparent;
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--foreground) 18%, transparent);
+}
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner { background: transparent; }
 </style>
 </head>
 <body>${sample}</body>
