@@ -1,18 +1,19 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   return (
     <DropdownMenu>
@@ -25,9 +26,24 @@ export function ModeToggle() {
         <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>浅色</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>深色</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>跟随系统</DropdownMenuItem>
+        <DropdownMenuRadioGroup
+          aria-label="界面主题"
+          value={theme ?? "system"}
+          onValueChange={setTheme}
+        >
+          <DropdownMenuRadioItem value="light">
+            <Sun className="text-muted-foreground" />
+            浅色
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">
+            <Moon className="text-muted-foreground" />
+            深色
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system">
+            <Monitor className="text-muted-foreground" />
+            跟随系统
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
