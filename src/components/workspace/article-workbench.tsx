@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Eye, PanelRightOpen, PenLine } from "lucide-react";
+import { Eye, FileCode2, PanelRightOpen, PenLine } from "lucide-react";
 
 import {
   AlertDialog,
@@ -18,22 +18,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
-import { useArticleHydrated } from "@/features/library/use-article-hydrated";
 import {
   INITIAL_TEMPLATE,
   useArticleStore,
 } from "@/features/library/article-store";
+import { useArticleHydrated } from "@/features/library/use-article-hydrated";
+import {
+  EMPTY_SKILL_METADATA,
+  parseSkillDocument,
+  serializeSkillDocument,
+  validateSkillMetadata,
+} from "@/features/skills/frontmatter";
 import { exportMarkdown, defaultExportName, readMarkdownFile } from "@/features/publishing/markdown-file";
 import { exportLongImage } from "@/features/publishing/long-image";
 import { copyPlainText } from "@/features/publishing/clipboard";
 import { copyHtmlSource, publishToWechat } from "@/features/publishing/wechat-publish";
 import { useDocumentHistory, useObservableValue } from "@/features/writing/use-document-history";
 import { countCharacters, countLines } from "@/features/writing/text-metrics";
+import { DEFAULT_THEME_ID } from "@/features/typography/presets";
 import { DraftLoader } from "./draft-loader";
 import type { WritingCanvasHandle } from "./writing-canvas";
 import { ExportNameDialog } from "./export-name-dialog";
 import { FormatRibbon } from "./format-ribbon";
 import { PreviewPane } from "./preview-pane";
+import { SkillMetadataDialog } from "./skill-metadata-dialog";
 import { SyntaxHelp } from "./syntax-help";
 import { ThemeGallery } from "./theme-gallery";
 import { WorkbenchMenubar } from "./workbench-menubar";
@@ -76,6 +84,10 @@ function WorkbenchSurface() {
   const setTableWrap = useArticleStore((state) => state.setTableWrap);
   const previewVisible = useArticleStore((state) => state.previewVisible);
   const setPreviewVisible = useArticleStore((state) => state.setPreviewVisible);
+  const skillMode = useArticleStore((state) => state.skillMode);
+  const setSkillMode = useArticleStore((state) => state.setSkillMode);
+  const skillMetadata = useArticleStore((state) => state.skillMetadata);
+  const setSkillMetadata = useArticleStore((state) => state.setSkillMetadata);
 
   const history = useDocumentHistory(markdown);
   const canUndo = useObservableValue(history.canUndo$, false);
@@ -88,6 +100,7 @@ function WorkbenchSurface() {
   const [mobilePane, setMobilePane] = useState<MobilePane>("write");
   const pane: MobilePane = previewVisible ? mobilePane : "write";
   const [themeOpen, setThemeOpen] = useState(false);
+  const [skillMetadataOpen, setSkillMetadataOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [busy, setBusy] = useState<BusyState>("none");
   const [resetOpen, setResetOpen] = useState(false);
@@ -107,6 +120,7 @@ function WorkbenchSurface() {
 
   const wordCount = countCharacters(markdown);
   const lineCount = countLines(markdown);
+  const skillValidationErrors = validateSkillMetadata(skillMetadata);
 
   const syncPreviewScroll = (ratio: number) => {
     const container = previewScrollRef.current;
@@ -182,15 +196,25 @@ function WorkbenchSurface() {
     const extension = kind === "markdown" ? "md" : "png";
     setExportDialog({
       kind,
-      defaultName: defaultExportName(markdown, extension),
+      defaultName:
+        kind === "markdown" && skillMode
+          ? "SKILL.md"
+          : defaultExportName(markdown, extension),
     });
   };
 
   const handleConfirmExport = (fileName: string) => {
     if (!exportDialog) return;
     if (exportDialog.kind === "markdown") {
-      exportMarkdown(markdown, fileName);
-      toast.add({ title: "Markdown 已导出", type: "success", timeout: 2500 });
+      const document = skillMode
+        ? serializeSkillDocument(skillMetadata, markdown)
+        : markdown;
+      exportMarkdown(document, fileName);
+      toast.add({
+        title: skillMode ? "SKILL.md 已导出" : "Markdown 已导出",
+        type: "success",
+        timeout: 2500,
+      });
       return;
     }
     void handleExportLongImage(fileName);
@@ -206,12 +230,29 @@ function WorkbenchSurface() {
     }
   };
 
+  const handleSkillModeChange = (enabled: boolean) => {
+    setSkillMode(enabled);
+    if (enabled && (!skillMetadata.name || !skillMetadata.description)) {
+      setSkillMetadataOpen(true);
+    }
+  };
+
   const handleImportFile = async (file: File) => {
     try {
       const text = await readMarkdownFile(file);
-      setMarkdown(text);
+      if (file.name.toLowerCase() === "skill.md") {
+        const parsed = parseSkillDocument(text);
+        setMarkdown(parsed?.body ?? text);
+        setSkillMetadata(parsed?.metadata ?? EMPTY_SKILL_METADATA);
+        setSkillMode(true);
+        toast.add({ title: "SKILL.md 已导入", type: "success", timeout: 2500 });
+      } else {
+        setMarkdown(text);
+        setSkillMode(false);
+        setSkillMetadata(EMPTY_SKILL_METADATA);
+        toast.add({ title: "Markdown 已导入", type: "success", timeout: 2500 });
+      }
       setMobilePane("write");
-      toast.add({ title: "Markdown 已导入", type: "success", timeout: 2500 });
     } catch (error) {
       toast.add({
         title: "导入失败",
@@ -223,6 +264,8 @@ function WorkbenchSurface() {
 
   const handleRestoreTemplate = () => {
     setMarkdown(INITIAL_TEMPLATE);
+    setSkillMode(false);
+    setSkillMetadata(EMPTY_SKILL_METADATA);
     setMobilePane("write");
     setResetOpen(false);
     toast.add({ title: "已恢复初始模板", type: "success", timeout: 2500 });
@@ -256,6 +299,9 @@ function WorkbenchSurface() {
         onTableWrapChange={setTableWrap}
         previewVisible={previewVisible}
         onPreviewVisibleChange={setPreviewVisible}
+        skillMode={skillMode}
+        onSkillModeChange={handleSkillModeChange}
+        onEditSkillMetadata={() => setSkillMetadataOpen(true)}
         busy={busy}
       />
 
@@ -285,7 +331,7 @@ function WorkbenchSurface() {
           </Tabs>
         ) : (
           <span className="min-w-0 flex-1 text-xs font-medium text-muted-foreground">
-            Markdown
+            {skillMode ? "SKILL.md" : "Markdown"}
           </span>
         )}
       </div>
@@ -324,6 +370,19 @@ function WorkbenchSurface() {
                 {wordCount} 字 · {lineCount} 行
               </span>
               <span className="flex items-center gap-1.5">
+                {skillMode ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSkillMetadataOpen(true)}
+                    className="h-7 gap-1 px-2 text-[11px]"
+                  >
+                    <FileCode2 className="size-3.5" />
+                    {skillValidationErrors.length > 0
+                      ? `${skillValidationErrors.length} 项待完善`
+                      : "SKILL 元数据"}
+                  </Button>
+                ) : null}
                 <span className="size-1.5 rounded-full bg-emerald-500" />
                 已保存到浏览器
               </span>
@@ -342,8 +401,10 @@ function WorkbenchSurface() {
         >
           <PreviewPane
             markdown={markdown}
-            themeId={themeId}
+            themeId={skillMode ? DEFAULT_THEME_ID : themeId}
             linkFootnotes={linkFootnotes}
+            skillMode={skillMode}
+            skillMetadata={skillMetadata}
             scrollRef={previewScrollRef}
             onHide={() => setPreviewVisible(false)}
           />
@@ -379,6 +440,13 @@ function WorkbenchSurface() {
         themeId={themeId}
         onSelect={setTheme}
       />
+      {skillMetadataOpen ? (
+        <SkillMetadataDialog
+          metadata={skillMetadata}
+          onOpenChange={setSkillMetadataOpen}
+          onSave={setSkillMetadata}
+        />
+      ) : null}
       <SyntaxHelp open={helpOpen} onOpenChange={setHelpOpen} />
 
       <AlertDialog open={clearOpen} onOpenChange={setClearOpen}>

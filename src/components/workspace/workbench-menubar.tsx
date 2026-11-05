@@ -9,6 +9,7 @@ import {
   ClipboardCopy,
   Code2,
   Download,
+  FileCode2,
   FileUp,
   ImageDown,
   Info,
@@ -69,6 +70,9 @@ interface WorkbenchMenubarProps {
   onTableWrapChange: (value: boolean) => void;
   previewVisible: boolean;
   onPreviewVisibleChange: (value: boolean) => void;
+  skillMode: boolean;
+  onSkillModeChange: (value: boolean) => void;
+  onEditSkillMetadata: () => void;
   busy: "none" | "copy" | "image";
 }
 
@@ -133,6 +137,9 @@ export function WorkbenchMenubar({
   onTableWrapChange,
   previewVisible,
   onPreviewVisibleChange,
+  skillMode,
+  onSkillModeChange,
+  onEditSkillMetadata,
   busy,
 }: WorkbenchMenubarProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -162,18 +169,24 @@ export function WorkbenchMenubar({
             </MenubarItem>
             <MenubarItem onClick={onExportMarkdown}>
               <Download />
-              导出 Markdown
+              {skillMode ? "导出 SKILL.md" : "导出 Markdown"}
             </MenubarItem>
             <MenubarSeparator />
-            <MenubarItem onClick={onCopyWechat} disabled={busy === "copy"}>
+            <MenubarItem
+              onClick={onCopyWechat}
+              disabled={skillMode || busy === "copy"}
+            >
               {busy === "copy" ? <Loader2 className="animate-spin" /> : <ClipboardCopy />}
               复制到公众号
             </MenubarItem>
-            <MenubarItem onClick={onCopyHtml}>
+            <MenubarItem onClick={onCopyHtml} disabled={skillMode}>
               <Code2 />
               复制 HTML
             </MenubarItem>
-            <MenubarItem onClick={onExportLongImage} disabled={busy === "image"}>
+            <MenubarItem
+              onClick={onExportLongImage}
+              disabled={skillMode || busy === "image"}
+            >
               {busy === "image" ? <Loader2 className="animate-spin" /> : <ImageDown />}
               导出长图
             </MenubarItem>
@@ -194,6 +207,20 @@ export function WorkbenchMenubar({
               <MenubarShortcut>Ctrl Shift Z</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
+            <MenubarCheckboxItem
+              checked={skillMode}
+              onCheckedChange={(value) => onSkillModeChange(Boolean(value))}
+            >
+              <FileCode2 />
+              SKILL 模式
+            </MenubarCheckboxItem>
+            {skillMode ? (
+              <MenubarItem onClick={onEditSkillMetadata}>
+                <FileCode2 />
+                编辑 SKILL 元数据…
+              </MenubarItem>
+            ) : null}
+            <MenubarSeparator />
             <MenubarItem onClick={onRestoreTemplate}>
               <RotateCcw />
               恢复示例
@@ -201,14 +228,16 @@ export function WorkbenchMenubar({
           </MenubarContent>
         </MenubarMenu>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onOpenThemeGallery}
-          className="hidden h-8 whitespace-nowrap rounded-2xl px-2.5 text-sm font-medium sm:inline-flex sm:px-3"
-        >
-          主题
-        </Button>
+        {!skillMode ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onOpenThemeGallery}
+            className="hidden h-8 whitespace-nowrap rounded-2xl px-2.5 text-sm font-medium sm:inline-flex sm:px-3"
+          >
+            主题
+          </Button>
+        ) : null}
 
         <MenubarMenu>
           <MenubarTrigger className="whitespace-nowrap px-2.5 sm:px-3">视图</MenubarTrigger>
@@ -223,21 +252,23 @@ export function WorkbenchMenubar({
               </MenubarCheckboxItem>
             </MenubarGroup>
             <MenubarSeparator />
-            <MenubarGroup>
-              <MenubarLabel>发布选项</MenubarLabel>
-              <MenubarCheckboxItem
-                checked={linkFootnotes}
-                onCheckedChange={(value) => onLinkFootnotesChange(Boolean(value))}
-              >
-                外链转脚注
-              </MenubarCheckboxItem>
-              <MenubarCheckboxItem
-                checked={tableWrap}
-                onCheckedChange={(value) => onTableWrapChange(Boolean(value))}
-              >
-                表格自动换行
-              </MenubarCheckboxItem>
-            </MenubarGroup>
+            {!skillMode ? (
+              <MenubarGroup>
+                <MenubarLabel>发布选项</MenubarLabel>
+                <MenubarCheckboxItem
+                  checked={linkFootnotes}
+                  onCheckedChange={(value) => onLinkFootnotesChange(Boolean(value))}
+                >
+                  外链转脚注
+                </MenubarCheckboxItem>
+                <MenubarCheckboxItem
+                  checked={tableWrap}
+                  onCheckedChange={(value) => onTableWrapChange(Boolean(value))}
+                >
+                  表格自动换行
+                </MenubarCheckboxItem>
+              </MenubarGroup>
+            ) : null}
           </MenubarContent>
         </MenubarMenu>
 
@@ -295,11 +326,13 @@ export function WorkbenchMenubar({
           </SheetHeader>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-2">
-            <SheetSection title="主题">
-              <SheetItem icon={Palette} onClick={act(onOpenThemeGallery)}>
-                选择文章主题
-              </SheetItem>
-            </SheetSection>
+            {!skillMode ? (
+              <SheetSection title="主题">
+                <SheetItem icon={Palette} onClick={act(onOpenThemeGallery)}>
+                  选择文章主题
+                </SheetItem>
+              </SheetSection>
+            ) : null}
 
             <SheetSection title="文件">
               <SheetItem
@@ -312,21 +345,27 @@ export function WorkbenchMenubar({
                 导入 Markdown
               </SheetItem>
               <SheetItem icon={Download} onClick={act(onExportMarkdown)}>
-                导出 Markdown
+                {skillMode ? "导出 SKILL.md" : "导出 Markdown"}
               </SheetItem>
               <SheetItem
                 icon={ClipboardCopy}
                 spinning={busy === "copy"}
+                disabled={skillMode}
                 onClick={act(onCopyWechat)}
               >
                 复制到公众号
               </SheetItem>
-              <SheetItem icon={Code2} onClick={act(onCopyHtml)}>
+              <SheetItem
+                icon={Code2}
+                disabled={skillMode}
+                onClick={act(onCopyHtml)}
+              >
                 复制 HTML
               </SheetItem>
               <SheetItem
                 icon={ImageDown}
                 spinning={busy === "image"}
+                disabled={skillMode}
                 onClick={act(onExportLongImage)}
               >
                 导出长图
@@ -340,6 +379,21 @@ export function WorkbenchMenubar({
               <SheetItem icon={Redo2} disabled={!canRedo} onClick={act(onRedo)}>
                 重做
               </SheetItem>
+              <SheetItem
+                icon={FileCode2}
+                checked={skillMode}
+                onClick={act(() => onSkillModeChange(!skillMode))}
+              >
+                SKILL 模式
+              </SheetItem>
+              {skillMode ? (
+                <SheetItem
+                  icon={FileCode2}
+                  onClick={act(onEditSkillMetadata)}
+                >
+                  编辑 SKILL 元数据
+                </SheetItem>
+              ) : null}
               <SheetItem icon={RotateCcw} onClick={act(onRestoreTemplate)}>
                 恢复示例
               </SheetItem>
@@ -353,20 +407,24 @@ export function WorkbenchMenubar({
               >
                 显示预览
               </SheetItem>
-              <SheetItem
-                icon={Link2}
-                checked={linkFootnotes}
-                onClick={act(() => onLinkFootnotesChange(!linkFootnotes))}
-              >
-                外链转脚注
-              </SheetItem>
-              <SheetItem
-                icon={Table2}
-                checked={tableWrap}
-                onClick={act(() => onTableWrapChange(!tableWrap))}
-              >
-                表格自动换行
-              </SheetItem>
+              {!skillMode ? (
+                <SheetItem
+                  icon={Link2}
+                  checked={linkFootnotes}
+                  onClick={act(() => onLinkFootnotesChange(!linkFootnotes))}
+                >
+                  外链转脚注
+                </SheetItem>
+              ) : null}
+              {!skillMode ? (
+                <SheetItem
+                  icon={Table2}
+                  checked={tableWrap}
+                  onClick={act(() => onTableWrapChange(!tableWrap))}
+                >
+                  表格自动换行
+                </SheetItem>
+              ) : null}
             </SheetSection>
 
             <SheetSection title="帮助">

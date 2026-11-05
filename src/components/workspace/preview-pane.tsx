@@ -16,12 +16,15 @@ import {
   renderArticleBody,
   wrapArticle,
 } from "@/features/publishing/html-document";
+import type { SkillMetadata } from "@/features/skills/frontmatter";
 import { cn } from "@/lib/utils";
 
 interface PreviewPaneProps {
   markdown: string;
   themeId: string;
   linkFootnotes: boolean;
+  skillMode: boolean;
+  skillMetadata: SkillMetadata;
   className?: string;
   scrollRef?: RefObject<HTMLDivElement | null>;
   onHide?: () => void;
@@ -35,6 +38,8 @@ export function PreviewPane({
   markdown,
   themeId,
   linkFootnotes,
+  skillMode,
+  skillMetadata,
   className,
   scrollRef,
   onHide,
@@ -67,7 +72,9 @@ export function PreviewPane({
       )}
     >
       <div className="hidden h-11 shrink-0 items-center justify-between border-b border-border/60 bg-background/60 px-3 backdrop-blur lg:flex">
-        <span className="text-xs font-medium text-muted-foreground">实时预览</span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {skillMode ? "SKILL.md 预览" : "实时预览"}
+        </span>
         <Tooltip>
           <TooltipTrigger
             render={
@@ -93,6 +100,19 @@ export function PreviewPane({
       >
         {content ? (
           <>
+            {skillMode ? (
+              <div className="border-b bg-muted/20 px-5 py-4 sm:px-8">
+                <div className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                  SKILL.md
+                </div>
+                <h2 className="text-lg font-semibold tracking-tight">
+                  {skillMetadata.name || "未命名技能"}
+                </h2>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {skillMetadata.description || "请填写技能用途和适用场景。"}
+                </p>
+              </div>
+            ) : null}
             <style dangerouslySetInnerHTML={{ __html: content.css }} />
             <div
               className="md-preview-content"

@@ -4,6 +4,10 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { DEFAULT_THEME_ID } from "@/features/typography/presets";
+import {
+  EMPTY_SKILL_METADATA,
+  type SkillMetadata,
+} from "@/features/skills/frontmatter";
 
 export const INITIAL_TEMPLATE = `# 把排版做成一次可复现的构建
 
@@ -81,11 +85,15 @@ export interface ArticleState {
   linkFootnotes: boolean;
   tableWrap: boolean;
   previewVisible: boolean;
+  skillMode: boolean;
+  skillMetadata: SkillMetadata;
   setMarkdown: (markdown: string) => void;
   setTheme: (themeId: string) => void;
   setLinkFootnotes: (enabled: boolean) => void;
   setTableWrap: (enabled: boolean) => void;
   setPreviewVisible: (visible: boolean) => void;
+  setSkillMode: (enabled: boolean) => void;
+  setSkillMetadata: (metadata: SkillMetadata) => void;
 }
 
 export const useArticleStore = create<ArticleState>()(
@@ -96,11 +104,15 @@ export const useArticleStore = create<ArticleState>()(
       linkFootnotes: false,
       tableWrap: false,
       previewVisible: true,
+      skillMode: false,
+      skillMetadata: EMPTY_SKILL_METADATA,
       setMarkdown: (markdown) => set({ markdown }),
       setTheme: (themeId) => set({ themeId }),
       setLinkFootnotes: (linkFootnotes) => set({ linkFootnotes }),
       setTableWrap: (tableWrap) => set({ tableWrap }),
       setPreviewVisible: (previewVisible) => set({ previewVisible }),
+      setSkillMode: (skillMode) => set({ skillMode }),
+      setSkillMetadata: (skillMetadata) => set({ skillMetadata }),
     }),
     {
       name: "md-article.workbench.v1",
@@ -113,6 +125,8 @@ export const useArticleStore = create<ArticleState>()(
         linkFootnotes: state.linkFootnotes,
         tableWrap: state.tableWrap,
         previewVisible: state.previewVisible,
+        skillMode: state.skillMode,
+        skillMetadata: state.skillMetadata,
       }),
     },
   ),
