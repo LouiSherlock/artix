@@ -1,16 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "katex/dist/katex.min.css";
-import "./globals.css";
-
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { site, siteUrl, structuredData } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 const alibaba = localFont({
   src: "../../public/fonts/AlibabaPuHuiTi-3-55-Regular.ttf",
@@ -18,16 +15,6 @@ const alibaba = localFont({
   weight: "400",
   display: "swap",
   fallback: ["PingFang SC", "Microsoft YaHei", "sans-serif"],
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -100,10 +87,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn(
         "h-full",
         "antialiased",
-        geistSans.variable,
-        geistMono.variable,
         "font-sans",
-        inter.variable,
         alibaba.variable,
       )}
     >

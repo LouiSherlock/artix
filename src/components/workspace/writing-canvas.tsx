@@ -79,7 +79,7 @@ const editorTheme = EditorView.theme({
     height: "100%",
     backgroundColor: "transparent",
     color: "var(--foreground)",
-    fontSize: "14px",
+    fontSize: "1rem",
   },
   ".cm-scroller": {
     overflow: "auto",
